@@ -1468,15 +1468,15 @@ function Dashboard({
             </div>
           </div>
           <div className="pipeline-row">
-            <PipelineNode index="01" title="Collect" subtitle={`${incidentEvidence.length} sources`} />
+            <PipelineNode number="01" title="Collect" text={`${incidentEvidence.length} sources`} />
             <PipelineConnector />
-            <PipelineNode index="02" title="Align" subtitle="Temporal" />
+            <PipelineNode number="02" title="Align" text="Temporal" />
             <PipelineConnector />
-            <PipelineNode index="03" title="Discount" subtitle="Reliability" />
+            <PipelineNode number="03" title="Discount" text="Reliability" />
             <PipelineConnector />
-            <PipelineNode index="04" title="Fuse" subtitle="D-S Theory" />
+            <PipelineNode number="04" title="Fuse" text="D-S Theory" />
             <PipelineConnector />
-            <PipelineNode index="05" title="Explain" subtitle="Failure analysis" active />
+            <PipelineNode number="05" title="Explain" text="Failure analysis" active />
           </div>
         </section>
       </div>
