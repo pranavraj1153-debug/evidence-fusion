@@ -2181,34 +2181,42 @@ function IncidentTimeline({
       a.time.localeCompare(b.time)
     );
 
+  const toSeconds = (time: string) => {
+    const [h, m, s] = time.split(":").map(Number);
+    return h * 3600 + m * 60 + s;
+  };
+  const firstTime = items[0] ? toSeconds(items[0].time) : 0;
+  const offsetLabel = (time: string) => {
+    const delta = Math.max(0, toSeconds(time) - firstTime);
+    if (delta < 60) return `T+00:${String(delta).padStart(2, "0")}`;
+    return `T+${Math.floor(delta / 60)}m ${String(delta % 60).padStart(2, "0")}s`;
+  };
+
   return (
     <div className="timeline">
-      {items.map((item) => (
-        <div
-          className="timeline-item"
-          key={item.id}
-        >
-          <div className="timeline-time">
-            {item.time}
+      {items.map((item, index) => (
+        <div className={`timeline-item ${item.severity}`} key={item.id}>
+          <div className="timeline-event-index">0{index + 1}</div>
+          <div className="timeline-time-block">
+            <strong>{item.time}</strong>
+            <span>{offsetLabel(item.time)}</span>
           </div>
 
-          <div
-            className={`timeline-marker ${item.severity}`}
-          />
+          <div className={`timeline-marker ${item.severity}`} />
 
           <div className="timeline-card">
-            <div className="event-title">
-              {item.title}
+            <div className="timeline-card-header">
+              <div>
+                <div className="event-title">{item.title}</div>
+                <div className="event-source">{item.source} • {item.id}</div>
+              </div>
+              <SeverityBadge severity={item.severity} />
             </div>
-
-            <div className="event-source">
-              {item.source} • {item.id}
+            <div className="timeline-signal">
+              <strong>{item.value}</strong>
+              <span>CONFIDENCE {item.confidence}%</span>
+              <span>RELIABILITY {item.reliability}%</span>
             </div>
-
-            <div className="timeline-value">
-              {item.value}
-            </div>
-
             <p>{item.description}</p>
           </div>
         </div>
@@ -2583,6 +2591,13 @@ function EvidenceExplorer({
         title="Evidence Explorer"
         description="Inspect individual evidence items and their reliability and confidence."
       />
+
+      <div className="evidence-command-metrics">
+        <div><span>TOTAL EVIDENCE</span><strong>{evidenceData.length}</strong><small>Across active case</small></div>
+        <div><span>HIGH / CRITICAL</span><strong>{evidenceData.filter((item) => item.severity === "high" || item.severity === "critical").length}</strong><small>Priority signals</small></div>
+        <div><span>AVG RELIABILITY</span><strong>{evidenceData.length ? (evidenceData.reduce((sum, item) => sum + item.reliability, 0) / evidenceData.length).toFixed(1) : "0.0"}%</strong><small>Source quality</small></div>
+        <div><span>ACTIVE FILTERS</span><strong>{activeSources.length}</strong><small>Source channels</small></div>
+      </div>
 
       <div className="evidence-workspace">
         <div className="panel source-panel">
